@@ -1,0 +1,12 @@
+{
+  "extraDroppet_house_task_drop_library_config": {
+    "dropLibraryId": "ID",
+    "type": "Type",
+    "quality": "Quality",
+    "rewardId": "RewardID",
+    "count": "Sum",
+    "probabilityOne": "Probability1",
+    "probabilityTwo": "Probability2",
+    "diamond": "Price"
+  }
+}
