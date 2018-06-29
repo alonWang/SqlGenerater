@@ -34,6 +34,13 @@ func main() {
 	values = orderedColKV.Values()
 	content := fillContent(values, dataMap, data)
 	output := fmt.Sprintf(INSERT_SQL_TEMPLATE, tableName, decor, content)
+	newFile, err := os.Create(tableName + "_generate.sql")
+	if err != nil {
+		panic(err)
+	}
+	defer newFile.Close()
+	newFile.WriteString(output)
+
 	fmt.Println(output)
 }
 func fillContent(values []interface{}, dataMap map[string]int, data [][]string) string {
@@ -74,12 +81,11 @@ func ParseExcel(filePath string) (map[string]int, [][]string) {
 	return headerMap, body
 }
 func parseBody(sheet *xlsx.Sheet) [][]string {
-	rows := len(sheet.Rows) - 2
-	body := make([][]string, rows)
-	for row := range sheet.Rows[2:] {
-		for col := range sheet.Rows[row].Cells {
-			body[row] = append(body[row], sheet.Rows[row].Cells[col].Value)
-			body[row][col] = sheet.Rows[row].Cells[col].Value
+	rows := sheet.Rows[1:]
+	body := make([][]string, len(rows))
+	for i := range rows {
+		for j := range rows[i].Cells {
+			body[i] = append(body[i], rows[i].Cells[j].Value)
 		}
 	}
 	return body
