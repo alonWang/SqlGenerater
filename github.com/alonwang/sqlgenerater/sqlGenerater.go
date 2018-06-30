@@ -4,15 +4,20 @@ import (
 	"os"
 	"io/ioutil"
 	"strings"
-	"github.com/tealeg/xlsx"
 	"github.com/emirpasic/gods/maps/treemap"
 	"fmt"
+	"flag"
 )
 
-const INSERT_SQL_TEMPLATE = "insert into %s(%s) values \n %s;"
+const INSERT_SQL_TEMPLATE = "insert into %s(%s)values\n%s;"
 
 func main() {
-	jsFile, err := os.Open("example.json")
+	mappingJson := flag.String("mapJson", "", "映射json文件地址")
+	excelFile := flag.String("excel", "", "excel文件")
+	GenerateSql(*mappingJson, *excelFile)
+}
+func GenerateSql(mappingJson, excelFile string) {
+	jsFile, err := os.Open(mappingJson)
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +34,7 @@ func main() {
 	for k, v := range unOrderedMap {
 		orderedColKV.Put(k, v)
 	}
-	dataMap, data := ParseExcel("test.xlsm")
+	dataMap, data := ParseExcel(excelFile)
 	decor := fillDecora(orderedColKV)
 	values = orderedColKV.Values()
 	content := fillContent(values, dataMap, data)
@@ -40,8 +45,6 @@ func main() {
 	}
 	defer newFile.Close()
 	newFile.WriteString(output)
-
-	fmt.Println(output)
 }
 func fillContent(values []interface{}, dataMap map[string]int, data [][]string) string {
 	contentTemplate := make([]string, 0)
@@ -68,36 +71,4 @@ func fillDecora(orderedMap *treemap.Map) string {
 		s = append(s, k.(string))
 	})
 	return strings.Join(s, ",")
-}
-
-func ParseExcel(filePath string) (map[string]int, [][]string) {
-	file, err := xlsx.OpenFile("test.xlsm")
-	if err != nil {
-		panic(err)
-	}
-	row := file.Sheets[0].Rows[0]
-	headerMap := parseHeader(row)
-	body := parseBody(file.Sheets[0])
-	return headerMap, body
-}
-func parseBody(sheet *xlsx.Sheet) [][]string {
-	rows := sheet.Rows[1:]
-	body := make([][]string, len(rows))
-	for i := range rows {
-		for j := range rows[i].Cells {
-			body[i] = append(body[i], rows[i].Cells[j].Value)
-		}
-	}
-	return body
-
-}
-func parseHeader(row *xlsx.Row) map[string]int {
-	idx := 0
-	cells := row.Cells
-	headerMap := make(map[string]int)
-	for cIdx := range cells {
-		headerMap[cells[cIdx].Value] = idx
-		idx++
-	}
-	return headerMap
 }

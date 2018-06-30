@@ -1,5 +1,5 @@
 {
-  "extraDroppet_house_task_drop_library_config": {
+  "pet_house_task_drop_library_config": {
     "dropLibraryId": "ID",
     "type": "Type",
     "quality": "Quality",
