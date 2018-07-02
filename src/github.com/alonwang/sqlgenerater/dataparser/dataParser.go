@@ -68,7 +68,8 @@ func parseBody(sheet xlsx.Sheet, ignoreLines []int) [][]string {
 		flag := true
 		for j := range rows[i].Cells {
 			line = append(line, rows[i].Cells[j].Value)
-			if len(line[j]) < 1 {
+			//空或为0不取
+			if len(line[j]) < 1||line[j]=="0" {
 				flag = false
 				line = line[:0]
 				break
