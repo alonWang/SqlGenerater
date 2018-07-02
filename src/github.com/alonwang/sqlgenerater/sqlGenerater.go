@@ -56,7 +56,7 @@ func fillContent(values []interface{}, dataMap map[string]int, data [][]string) 
 		}
 		var line = "( "
 		for _, value := range contentTemplate {
-			line += value + ","
+			line += "'"+value+"'" + ","
 		}
 		line = line[:len(line)-1]
 		line += ")"
