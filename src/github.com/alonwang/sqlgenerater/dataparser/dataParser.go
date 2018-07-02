@@ -65,23 +65,19 @@ func parseBody(sheet xlsx.Sheet, ignoreLines []int) [][]string {
 	//去处空行
 	for i := range rows {
 
-		flag := true
 		for j := range rows[i].Cells {
 			line = append(line, rows[i].Cells[j].Value)
 			//空或为0不取
 			if len(line[j]) < 1 {
-				flag = false
-				line = line[:0]
-				break
+				line[j] = "0"
+
 			}
 		}
-		if flag {
-			for k := range line {
-				body[idx] = append(body[idx], line[k])
-			}
-			idx++
-			line = line[:0]
+		for k := range line {
+			body[idx] = append(body[idx], line[k])
 		}
+		idx++
+		line = line[:0]
 
 	}
 	return body
